@@ -11,12 +11,14 @@ import (
 	"github.com/Jacalz/linalg/matrix"
 )
 
+// LineDrawer draws lines from a matrix of position vectors.
 type LineDrawer struct {
 	widget.BaseWidget
 	lines  []fyne.CanvasObject
 	matrix matrix.Matrix
 }
 
+// NewLineDrawer creates a new LineDrawer with the given matrix.
 func NewLineDrawer(matrix matrix.Matrix) *LineDrawer {
 	return &LineDrawer{
 		lines:  LinesFromMatrix(matrix),
@@ -24,6 +26,7 @@ func NewLineDrawer(matrix matrix.Matrix) *LineDrawer {
 	}
 }
 
+// LinesFromMatrix creates new canvas.Line from the matrix.
 func LinesFromMatrix(M matrix.Matrix) []fyne.CanvasObject {
 	return []fyne.CanvasObject{
 		NewLineBetween(M[0][0], M[0][1], M[1][0], M[1][1]),
@@ -47,6 +50,7 @@ func LinesFromMatrix(M matrix.Matrix) []fyne.CanvasObject {
 	}
 }
 
+// Scrolled handles the zooming of the view.
 func (l *LineDrawer) Scrolled(s *fyne.ScrollEvent) {
 	a := float64(s.Scrolled.DY) / 8 // One scroll step seems to be 10.
 	if a < 0 {
@@ -64,6 +68,7 @@ func (l *LineDrawer) Scrolled(s *fyne.ScrollEvent) {
 	l.Refresh()
 }
 
+// Dragged handles the rotation of the view.
 func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
 	a := float64(d.Dragged.DY) * 0.007
 	b := float64(d.Dragged.DX) * -0.007
@@ -79,10 +84,12 @@ func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
 	l.Refresh()
 }
 
+// DragEnd is not currently needed other than  to satisfy fyne.Draggable.
 func (l *LineDrawer) DragEnd() {
 
 }
 
+// CreateRenderer is a method that creates a renderer for the widget.
 func (l *LineDrawer) CreateRenderer() fyne.WidgetRenderer {
 	l.ExtendBaseWidget(l)
 	return &lineRenderer{lineDrawer: l}
@@ -110,6 +117,7 @@ func (lr *lineRenderer) Refresh() {
 	canvas.Refresh(lr.lineDrawer)
 }
 
+// NewLineBetween creates a new line between the given coordinates.
 func NewLineBetween(x1, y1, x2, y2 float64) *canvas.Line {
 	return &canvas.Line{
 		Position1:   fyne.NewPos(float32(x1)+300, float32(x2)+300),
