@@ -66,21 +66,15 @@ func (l *LineDrawer) Scrolled(s *fyne.ScrollEvent) {
 
 func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
 	a := float64(d.Dragged.DY) * 0.007
-	X := matrix.Matrix{
-		{1, 0, 0},
-		{0, math.Cos(a), -math.Sin(a)},
-		{0, math.Sin(a), math.Cos(a)},
-	}
-
 	b := float64(d.Dragged.DX) * -0.007
-	Y := matrix.Matrix{
+
+	R := matrix.Matrix{
 		{math.Cos(b), 0, math.Sin(b)},
-		{0, 1, 0},
-		{-math.Sin(b), 0, math.Cos(b)},
+		{math.Sin(a) * math.Sin(b), math.Cos(a), -math.Sin(a) * math.Cos(b)},
+		{-math.Cos(a) * math.Sin(b), math.Sin(a), math.Cos(a) * math.Cos(b)},
 	}
 
-	l.matrix, _ = matrix.Mult(X, l.matrix)
-	l.matrix, _ = matrix.Mult(Y, l.matrix)
+	l.matrix, _ = matrix.Mult(R, l.matrix)
 	l.lines = LinesFromMatrix(l.matrix)
 	l.Refresh()
 }
