@@ -48,10 +48,15 @@ func LinesFromMatrix(M matrix.Matrix) []fyne.CanvasObject {
 }
 
 func (l *LineDrawer) Scrolled(s *fyne.ScrollEvent) {
+	a := float64(s.Scrolled.DY) / 8 // One scroll step seems to be 10.
+	if a < 0 {
+		a += 2 // Get it back into the positive range.
+	}
+
 	T := matrix.Matrix{
-		{float64(s.Scrolled.DY) * 0.1, 0, 0},
-		{0, float64(s.Scrolled.DY) * 0.1, 0},
-		{0, 0, float64(s.Scrolled.DY) * 0.1},
+		{a, 0, 0},
+		{0, a, 0},
+		{0, 0, a},
 	}
 
 	l.matrix, _ = matrix.Mult(T, l.matrix)
@@ -60,14 +65,14 @@ func (l *LineDrawer) Scrolled(s *fyne.ScrollEvent) {
 }
 
 func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
-	a := float64(d.Dragged.DY) * 0.01
+	a := float64(d.Dragged.DY) * 0.007
 	X := matrix.Matrix{
-		{math.Cos(a), -math.Sin(a), 0},
-		{math.Sin(a), math.Cos(a), 0},
-		{0, 0, 1},
+		{1, 0, 0},
+		{0, math.Cos(a), -math.Sin(a)},
+		{0, math.Sin(a), math.Cos(a)},
 	}
 
-	b := float64(d.Dragged.DX) * 0.01
+	b := float64(d.Dragged.DX) * -0.007
 	Y := matrix.Matrix{
 		{math.Cos(b), 0, math.Sin(b)},
 		{0, 1, 0},

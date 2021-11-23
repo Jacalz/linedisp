@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"github.com/Jacalz/linalg/matrix"
 	"github.com/Jacalz/linalg/rn"
@@ -40,5 +41,6 @@ func main() {
 	M, _ = matrix.Mult(T, M)
 
 	w.SetContent(NewLineDrawer(M))
+	w.Resize(fyne.NewSize(600, 600))
 	w.ShowAndRun()
 }
