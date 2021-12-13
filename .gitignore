@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-linedisp
+operastar
 
 # Test binary, built with `go test -c`
 *.test
