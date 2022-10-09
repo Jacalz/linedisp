@@ -11,6 +11,10 @@ import (
 	"github.com/Jacalz/linalg/matrix"
 )
 
+var _ fyne.Widget = (*LineDrawer)(nil)
+var _ fyne.Draggable = (*LineDrawer)(nil)
+var _ fyne.Scrollable = (*LineDrawer)(nil)
+
 // LineDrawer draws lines from a matrix of position vectors.
 type LineDrawer struct {
 	widget.BaseWidget
@@ -20,10 +24,12 @@ type LineDrawer struct {
 
 // NewLineDrawer creates a new LineDrawer with the given matrix.
 func NewLineDrawer(matrix matrix.Matrix) *LineDrawer {
-	return &LineDrawer{
+	draw := &LineDrawer{
 		lines:  LinesFromMatrix(matrix),
 		matrix: matrix,
 	}
+	draw.ExtendBaseWidget(draw)
+	return draw
 }
 
 // LinesFromMatrix creates new canvas.Line from the matrix.
@@ -52,15 +58,17 @@ func LinesFromMatrix(M matrix.Matrix) []fyne.CanvasObject {
 
 // Scrolled handles the zooming of the view.
 func (l *LineDrawer) Scrolled(s *fyne.ScrollEvent) {
-	a := float64(s.Scrolled.DY) / 8 // One scroll step seems to be 10.
-	if a < 0 {
-		a += 2 // Get it back into the positive range.
+	scale := math.Abs(float64(s.Scrolled.DY)) / 8
+
+	// Zooming out uses scale factor  0 < scale < 1, not negative numbers.
+	if s.Scrolled.DY < 0 {
+		scale = 1 / scale
 	}
 
 	T := matrix.Matrix{
-		{a, 0, 0},
-		{0, a, 0},
-		{0, 0, a},
+		{scale, 0, 0},
+		{0, scale, 0},
+		{0, 0, scale},
 	}
 
 	l.matrix, _ = matrix.Mult(T, l.matrix)
@@ -73,6 +81,7 @@ func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
 	a := float64(d.Dragged.DY) * 0.007
 	b := float64(d.Dragged.DX) * -0.007
 
+	// Combined matrix for dragging in both x and y directions
 	R := matrix.Matrix{
 		{math.Cos(b), 0, math.Sin(b)},
 		{math.Sin(a) * math.Sin(b), math.Cos(a), -math.Sin(a) * math.Cos(b)},
@@ -91,7 +100,6 @@ func (l *LineDrawer) DragEnd() {
 
 // CreateRenderer is a method that creates a renderer for the widget.
 func (l *LineDrawer) CreateRenderer() fyne.WidgetRenderer {
-	l.ExtendBaseWidget(l)
 	return &lineRenderer{lineDrawer: l}
 }
 
