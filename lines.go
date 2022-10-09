@@ -78,14 +78,20 @@ func (l *LineDrawer) Scrolled(s *fyne.ScrollEvent) {
 
 // Dragged handles the rotation of the view.
 func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
-	a := float64(d.Dragged.DY) * 0.007
-	b := float64(d.Dragged.DX) * -0.007
+	dy := float64(d.Dragged.DY) / 100
+	dx := -float64(d.Dragged.DX) / 100
 
-	// Combined matrix for dragging in both x and y directions
+	cosDx := math.Cos(dx)
+	sinDx := math.Sin(dx)
+
+	cosDy := math.Cos(dy)
+	sinDy := math.Sin(dy)
+
+	// Combined matrix for dragging in both x and y directions.
 	R := matrix.Matrix{
-		{math.Cos(b), 0, math.Sin(b)},
-		{math.Sin(a) * math.Sin(b), math.Cos(a), -math.Sin(a) * math.Cos(b)},
-		{-math.Cos(a) * math.Sin(b), math.Sin(a), math.Cos(a) * math.Cos(b)},
+		{cosDx, 0, sinDx},
+		{sinDy * sinDx, cosDy, -sinDy * cosDx},
+		{-cosDy * sinDx, sinDy, cosDy * cosDx},
 	}
 
 	l.matrix, _ = matrix.Mult(R, l.matrix)
@@ -93,7 +99,7 @@ func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
 	l.Refresh()
 }
 
-// DragEnd is not currently needed other than  to satisfy fyne.Draggable.
+// DragEnd is not currently needed other than to satisfy fyne.Draggable.
 func (l *LineDrawer) DragEnd() {
 
 }
