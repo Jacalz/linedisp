@@ -60,7 +60,7 @@ func LinesFromMatrix(M matrix.Matrix) []fyne.CanvasObject {
 func (l *LineDrawer) Scrolled(s *fyne.ScrollEvent) {
 	scale := math.Abs(float64(s.Scrolled.DY)) / 8
 
-	// Zooming out uses scale factor  0 < scale < 1, not negative numbers.
+	// Zooming out uses scale factor 0 < scale < 1, not negative numbers.
 	if s.Scrolled.DY < 0 {
 		scale = 1 / scale
 	}
@@ -87,7 +87,7 @@ func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
 	cosDy := math.Cos(dy)
 	sinDy := math.Sin(dy)
 
-	// Combined matrix for dragging in both x and y directions.
+	// Combined matrix for dragging in both directions.
 	R := matrix.Matrix{
 		{cosDx, 0, sinDx},
 		{sinDy * sinDx, cosDy, -sinDy * cosDx},
@@ -100,9 +100,7 @@ func (l *LineDrawer) Dragged(d *fyne.DragEvent) {
 }
 
 // DragEnd is not currently needed other than to satisfy fyne.Draggable.
-func (l *LineDrawer) DragEnd() {
-
-}
+func (l *LineDrawer) DragEnd() {}
 
 // CreateRenderer is a method that creates a renderer for the widget.
 func (l *LineDrawer) CreateRenderer() fyne.WidgetRenderer {
