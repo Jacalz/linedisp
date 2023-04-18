@@ -11,9 +11,11 @@ import (
 	"github.com/Jacalz/linalg/matrix"
 )
 
-var _ fyne.Widget = (*LineDrawer)(nil)
-var _ fyne.Draggable = (*LineDrawer)(nil)
-var _ fyne.Scrollable = (*LineDrawer)(nil)
+var (
+	_ fyne.Widget     = (*LineDrawer)(nil)
+	_ fyne.Draggable  = (*LineDrawer)(nil)
+	_ fyne.Scrollable = (*LineDrawer)(nil)
+)
 
 // LineDrawer draws lines from a matrix of position vectors.
 type LineDrawer struct {

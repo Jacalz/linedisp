@@ -28,8 +28,8 @@ func main() {
 	M := matrix.NewFromVec(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12)
 
 	// Transpose by u in specific directions.
-	//u := rn.VecN{2, 1, 0}
-	//M, _ = matrix.AddVec(M, u)
+	// u := rn.VecN{2, 1, 0}
+	// M, _ = matrix.AddVec(M, u)
 
 	// Scale by a factor s in all directions.
 	s := float64(200)
