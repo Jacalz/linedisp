@@ -1,4 +1,4 @@
-name: Static Analysis
+name: Analysis
 on: [push, pull_request]
 permissions:
   contents: read
@@ -10,38 +10,36 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         persist-credentials: false
-    - uses: WillAbides/setup-go-faster@v1.7.0
+    - uses: WillAbides/setup-go-faster@v1.8.0
       with:
-        go-version: '1.16.x'
+        go-version: '1.20.x'
 
     - name: Install build dependencies
-      run: sudo apt-get update && sudo apt-get install gcc libgl1-mesa-dev libegl1-mesa-dev libgles2-mesa-dev libx11-dev xorg-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends clang libgl1-mesa-dev libegl1-mesa-dev libgles2-mesa-dev libx11-dev xorg-dev
         
     - name: Install static analysis tools
       run: |
-        go install golang.org/x/tools/cmd/goimports@latest
-        go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
-        go install golang.org/x/lint/golint@latest
-        go install honnef.co/go/tools/cmd/staticcheck@v0.2.2
-        go install github.com/securego/gosec/v2/cmd/gosec@v2.9.1
+        go install github.com/securego/gosec/v2/cmd/gosec@v2.15.0
+        go install github.com/fzipp/gocyclo/cmd/gocyclo@v0.6.0
+        go install honnef.co/go/tools/cmd/staticcheck@v0.4.3
+        go install mvdan.cc/gofumpt@v0.5.0
 
     - name: Vet
       run: go vet ./...
 
-    - name: Goimports
-      run: test -z $(goimports -e -d . | tee /dev/stderr)
+    - name: Gofumpt
+      run: test -z $(gofumpt -d -e . | tee /dev/stderr)
 
     - name: Gocyclo
       run: gocyclo -over 20 .
 
-    - name: Golint
-      run: golint -set_exit_status $(go list ./...)
-
     - name: Staticcheck
-      run: staticcheck -go 1.16 ./...
+      run: staticcheck ./...
 
     - name: Gosec
       run: gosec ./...
