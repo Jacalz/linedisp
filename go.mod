@@ -1,6 +1,6 @@
 module github.com/Jacalz/linedisp
 
-go 1.17
+go 1.18
 
 require (
 	fyne.io/fyne/v2 v2.3.3
